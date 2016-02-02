@@ -1,0 +1,53 @@
+<html>
+<body>
+	<p>
+		This is a very simple test file metadata analyzer
+	</p>
+	<form id="file-form" enctype="multipart/form-data">
+		<input type="file" name="the-file" />
+		<input type="submit" value="Upload" />
+	</form>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+
+			var files;
+			$('input[type=file]').on('change', function(event) {
+				files = event.target.files; // Grab the files and set them to our variable
+			});
+			$('form').on('submit', uploadFiles);
+
+			// Catch the form submit and upload the files
+			function uploadFiles(event)
+			{
+				event.stopPropagation(); // Stop stuff happening
+				event.preventDefault(); // Totally stop stuff happening
+
+				// START A LOADING SPINNER HERE
+
+    			// Create a formdata object and add the files
+				var data = new FormData();
+				$.each(files, function(key, value) {
+					data.append('image', value);
+				});
+
+				$.ajax({
+					url: '/api/fileanalyse', //window.location.origin + 
+					type: 'POST',
+					data: data,
+					cache: false,
+					processData: false, // Don't process the files
+					contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+					dataType: "json",
+					error: function(jqXHR, textStatus, errorThrown) {
+						alert('ERRORS: ' + textStatus);
+					},
+					success: function(data) {
+						alert('This is JSON Response through AJAX. FILE SIZE: ' + data.size + ' bytes');
+					}
+				});
+			};
+		});
+	</script>
+</body>
+</html>
